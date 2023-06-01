@@ -32,7 +32,7 @@ export const destroySession = (req, res) => {
   if (req.session) {
     req.session.destroy();
   }
-  console.log("Sesion finalizada " + req.session);
+  req.logger.info("Sesion Finalizada");
   res.redirect("http://localhost:8080/api/session/login/");
 };
 

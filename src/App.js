@@ -3,6 +3,7 @@ import express from "express";
 import routerProduct from "./routes/products.routes.js";
 import routerCart from "./routes/carts.routes.js";
 import routerUser from "./routes/user.routes.js";
+import routerLogger from './routes/logger.routes.js';
 import routerSession from "./routes/session.routes.js";
 import { engine } from "express-handlebars";
 import * as path from "path";
@@ -15,6 +16,7 @@ import mongoose from "mongoose";
 import MongoStore from 'connect-mongo'
 import session from 'express-session'
 import routerMocking from './routes/mocking.routes.js';
+import { addLogger } from './utils/logger.js';
 
 const app = express();
 const PORT = 8080;
@@ -67,6 +69,7 @@ app.use(passport.initialize())
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(addLogger)
 
 //Routes
 app.use("/static", express.static(__dirname + "/public"));
@@ -76,5 +79,6 @@ app.use("/api/carts", routerCart);
 app.use('/user/', routerUser)
 app.use('/api/session/', routerSession)
 app.use('/mockingproducts',routerMocking)
+app.use("/loggerTest",routerLogger)
 
 

@@ -34,7 +34,7 @@ const initializePassport = () => {
                 const user = await findUserByEmail(username) //Username = email
 
                 if (user) { //Usario existe
-                    console.log("Usuario Existente")
+                    req.logger.error("Usuario Existente")
                     return done(null, false) //null que no hubo errores y false que no se creo el usuario
 
                 }
@@ -43,7 +43,7 @@ const initializePassport = () => {
                 let userCart= await createCart()
                 bodyReq.idCart=userCart._id
                 const result = await createUser(bodyReq)
-                console.log("User Creado")
+                req.logger.info("User Creado")
                 return done(null, result) //Usuario creado correctamente
 
             } catch (error) {
@@ -54,12 +54,12 @@ const initializePassport = () => {
 
     ))
 
-    passport.use('login', new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
+    passport.use('login', new LocalStrategy({ passReqToCallback: true, usernameField: 'email' }, async (req, username, password, done) => {
         
         try {
             let user = await findUserByEmail(username)
             if (!user) { //Usuario no encontrado
-                console.log("User no encontrado")
+                req.logger.error("User no encontrado")
                 const adminUser=process.env.ADMIN_USER
                 const adminPass=process.env.ADMIN_PASS
                 if(username==adminUser  && password==adminPass){
@@ -77,10 +77,10 @@ const initializePassport = () => {
                 return done(null, false)
             }
             if (validatePassword(password, user.password)) { //Usuario y contraseña validos
-                console.log("Sesion Iniciada")
+                req.logger.info("Sesion Iniciada")
                 return done(null, user)
             }
-            console.log("Constraseña invalida")
+            req.logger.error("Contraseña Invalida")
             return done(null, false) //Contraseña no valida
 
         } catch (error) {
